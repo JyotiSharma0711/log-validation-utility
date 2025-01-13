@@ -470,7 +470,6 @@ export const RSFvalidateLogsV2 = (data: any) => {
   }
 }
 
-
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}
 

@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../dao'
 import { logger } from '../logger'
-import { FisApiSequence, fisFlows } from '../../constants'
+import { FisApiSequence, fisFlows, FIS12InvoiceLoanSequence } from '../../constants'
+import {invoiceBasedLoanSequence, personalLoanSequence, purchaseFinanceSequence, workingCapitalLoanSequence } from '../../constants/fisFlows'
 import { search } from '../../utils/FIS/FIS12/search'
 import { checkOnSearch } from '../../utils/FIS/FIS12/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS12/select'
@@ -32,8 +33,50 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
   }
 
   try {
-    switch (version) {
-      case '2.0.0': {
+
+    const processApiSequence = (apiSequence: any, data: any, logReport: any, flow: string) => {
+      if (!(flow in fisFlows)) {
+        apiSequence.forEach((apiSeq: any) => {
+          if (data[apiSeq]) {
+            if (!_.isEmpty(data[apiSeq])) {
+              logReport = { ...logReport, [apiSeq]: data[apiSeq] };
+            }
+          } else {
+            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` };
+          }
+        });
+        logger.info(logReport, 'Report Generated Successfully!!');
+        return logReport;
+      } else {
+        return { invldFlow: 'Provided flow is invalid' };
+      }
+    };
+
+       switch (flow) {
+          case fisFlows.INVOICE:
+            logReport = processApiSequence(invoiceBasedLoanSequence, data, logReport, flow)
+            break
+          case fisFlows.PERSONAL:
+            logReport = processApiSequence(personalLoanSequence, data, logReport, flow)
+            break
+          case fisFlows.WORKING_CAPITAL_LOAN:
+            logReport = processApiSequence(workingCapitalLoanSequence, data, logReport, flow)
+            break
+          case fisFlows.PURCHASE_FINANCE:
+            logReport = processApiSequence(purchaseFinanceSequence, data, logReport, flow)
+            break
+        }
+
+    
+    }catch (error:any) {
+      logger.error(error)
+      return error.message
+    }
+
+  try {
+    switch (flow) {
+      
+      case 'PERSONAL_LOANS': {
         if (data[FisApiSequence.SEARCH]) {
           const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow, FisApiSequence.SEARCH)
           if (!_.isEmpty(searchResp)) {
@@ -448,9 +491,29 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
           }
         }
 
+        
+
         break
       }
 
+      case 'INVOICE_BASED_LOAN': {
+        if (data[FIS12InvoiceLoanSequence.SEARCH]) {
+          const searchResp = search(data[FIS12InvoiceLoanSequence.SEARCH], msgIdSet, flow, FIS12InvoiceLoanSequence.SEARCH)
+          if (!_.isEmpty(searchResp)) {
+            logReport = { ...logReport, [FIS12InvoiceLoanSequence.SEARCH]: searchResp }
+          }
+        }
+
+        if (data[FIS12InvoiceLoanSequence.SEARCH]) {
+          const searchResp = search(data[FIS12InvoiceLoanSequence.SEARCH], msgIdSet, flow, FIS12InvoiceLoanSequence.SEARCH)
+          if (!_.isEmpty(searchResp)) {
+            logReport = { ...logReport, [FIS12InvoiceLoanSequence.SEARCH]: searchResp }
+          }
+        }
+        
+        break;
+      }
+      
       default:
         logReport = { ...logReport, version: `Invalid version ${version}` }
         break

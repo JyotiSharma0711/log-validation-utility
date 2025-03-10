@@ -41,7 +41,7 @@ import {
   compareUpdatedAtAndContextTimeStamp,
 } from '../igmHelpers'
 
-const checkOnIssue = (data: any,type: string) => {
+const checkOnIssue = (data: any) => {
   const onissueObj: any = {}
   let res: any = {}
   try {
@@ -187,7 +187,7 @@ const checkOnIssue = (data: any,type: string) => {
       logger.error(`!!Some error occurred while checking /${constants.RET_ONISSUE} API`, err)
     }
   }
-}
 
+}
 export default checkOnIssue
 

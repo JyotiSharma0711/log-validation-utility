@@ -987,7 +987,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/trv' \
 ### For RSF V2 Sample Curl Request (Local)
 
 ```shell
-curl --location 'http://localhost:3008/api/validate/rsf' \
+curl --location 'https://log-validation.ondc.org/api/validate/rsf' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:NTS10",

@@ -441,7 +441,7 @@ export const validateMessageIdPair = (context: any, action: string, isOnAction: 
   
   // For on_action calls, check if message_id matches with the corresponding action call
   if (isOnAction) {
-    const actionName = action.substring(3) // remove 'on_' prefix
+    const actionName = action.substring(3) 
     const actionContext = getValue(`${actionName}_context`)
     
     if (actionContext && context.message_id !== actionContext.message_id) {

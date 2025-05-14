@@ -2,6 +2,7 @@ import { logger } from '../../../../shared/logger'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
 import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
+import { validateXinput } from './validations/xinputValidations'
 
 export const checkinitWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -80,6 +81,12 @@ export const checkinitWCL = (data: any, msgIdSet: any, flow: string, sequence: s
       }
       if (!item.quantity?.count) {
         errorObj['order.items.quantity'] = 'Item quantity count is required'
+      }
+
+      // Validate xinput
+      const xinputValidation = validateXinput(item.xinput, flow, sequence)
+      if (!xinputValidation.isValid) {
+        Object.assign(errorObj, { 'item.xinput': xinputValidation.errors })
       }
     }
 

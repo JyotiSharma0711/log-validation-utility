@@ -2,6 +2,7 @@ import { logger } from '../../../../shared/logger'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
 import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
+import { validateXinput } from './validations/xinputValidations'
 
 export const checkon_selectWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -46,11 +47,28 @@ export const checkon_selectWCL = (data: any, msgIdSet: any, flow: string, sequen
       Object.assign(errorObj, schemaValidation)
     }
 
-    // Additional validation logic can be added here
+    const { message } = data
+    const order = message.order
+
+    // Validate items
+    if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {
+      errorObj['order.items'] = 'Items array is required and cannot be empty'
+    } else {
+      const item = order.items[0]
+      if (!item.id) {
+        errorObj['order.items.id'] = 'Item ID is required'
+      }
+
+      // Validate xinput
+      const xinputValidation = validateXinput(item.xinput, flow, sequence)
+      if (!xinputValidation.isValid) {
+        Object.assign(errorObj, { 'item.xinput': xinputValidation.errors })
+      }
+    }
 
     return Object.keys(errorObj).length > 0 && errorObj
   } catch (error: any) {
-    logger.error(error.message)
+    logger.error(`Error in checkOnSelectWCL: ${error.message}`)
     return { error: error.message }
   }
 }

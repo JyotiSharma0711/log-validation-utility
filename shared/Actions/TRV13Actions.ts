@@ -51,8 +51,9 @@ export function validateLogsForTRV13(data: any, flow: string, version: string) {
 
     if (data[mobilitySequence.SEARCH_INC]) {
       const errors = search(data[mobilitySequence.SEARCH_INC], msgIdSet, version, mobilitySequence.SEARCH_INC)
+      console.log('SEARCH_INC',data[mobilitySequence.SEARCH_INC] )
       if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
+        logReport = { ...logReport, [mobilitySequence.SEARCH_INC]: errors }
       }
     }
 

@@ -101,8 +101,8 @@ export const on_searchPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
           return Object.keys(errorObj).length > 0 ? errorObj : {}
         }
       } else {
-        errorObj['missingFields'] = '/context, /message, /catalog or /message/catalog is missing or empty'
-        return Object.keys(errorObj).length > 0 && errorObj
+      errorObj['missingFields'] = '/context, /message, /catalog or /message/catalog is missing or empty'
+      return Object.keys(errorObj).length > 0 && errorObj
       }
     }
 

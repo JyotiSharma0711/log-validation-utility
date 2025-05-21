@@ -196,7 +196,7 @@ export const onStatusFISWCLSchema = {
                 minItems: 1,
               },
             },
-            required: ['provider', 'tags'],
+            required: ['provider'],
           },
           quote: {
             type: 'object',
@@ -375,7 +375,7 @@ export const onStatusFISWCLSchema = {
             minItems: 1,
           },
         },
-        required: ['order', 'quote', 'items'],
+        required: ['order'],
       },
     },
     required: ['context', 'message'],

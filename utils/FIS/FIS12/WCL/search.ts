@@ -68,6 +68,7 @@ export const checksearchWCL = (data: any, msgIdSet: any, flow: string, sequence:
     }
 
     // Validate BAP terms in tags
+    if (sequence === "search"){
     if (!intent.tags || !Array.isArray(intent.tags)) {
       errorObj['intent.tags'] = 'Intent tags array is required';
     } else {
@@ -100,6 +101,7 @@ export const checksearchWCL = (data: any, msgIdSet: any, flow: string, sequence:
         setValue('bap_terms', bapTermsTag.list);
       }
     }
+  }
 
     // Validate provider details in search_1 and search_2
     if (sequence === 'search_1' || sequence === 'search_2') {
@@ -110,6 +112,27 @@ export const checksearchWCL = (data: any, msgIdSet: any, flow: string, sequence:
           errorObj['intent.provider.id'] = 'Provider ID is required';
         }
         
+      const bapTermsTag = intent.provider.tags.find((tag: any) => tag.descriptor?.code === 'BAP_TERMS');
+      if (!bapTermsTag || !bapTermsTag.list) {
+        errorObj['intent.tags.BAP_TERMS'] = 'BAP_TERMS tag with list is required';
+      } else {
+        // Validate required BAP terms fields
+        const requiredTerms = [
+          'BUYER_FINDER_FEES_TYPE',
+          'BUYER_FINDER_FEES_PERCENTAGE',
+          'DELAY_INTEREST',
+          'STATIC_TERMS',
+          'OFFLINE_CONTRACT'
+        ];
+        
+        for (const term of requiredTerms) {
+          const termItem = bapTermsTag.list.find((item: any) => item.descriptor?.code === term);
+          if (!termItem?.value) {
+            errorObj[`intent.tags.BAP_TERMS.${term}`] = `${term} value is required`;
+          }
+        }
+      }
+
         // Validate items in search_1 and search_2
         if (!intent.provider.items || !Array.isArray(intent.provider.items) || intent.provider.items.length === 0) {
           errorObj['intent.provider.items'] = 'Provider items array is required and cannot be empty';

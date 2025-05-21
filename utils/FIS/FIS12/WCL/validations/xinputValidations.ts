@@ -95,7 +95,6 @@ export const validateXinput = (xinput: Xinput, flow: string, sequence: string): 
     'SELECT',
     'INIT',
     'ON_SEARCH_2',
-    'ON_SELECT_2'
   ]
 
   // Handle cases where xinput should not be present
@@ -113,7 +112,7 @@ export const validateXinput = (xinput: Xinput, flow: string, sequence: string): 
   }
 
   // Validate form response in action calls
-  if (sequenceUpper.startsWith('SEARCH_') || sequenceUpper.startsWith('SELECT_') || sequenceUpper.startsWith('INIT_')) {
+  if (sequenceUpper.startsWith('SEARCH_') || sequenceUpper.startsWith('SELECT_') || sequenceUpper.startsWith('INIT_') || sequenceUpper === "on_init_3" || sequenceUpper === "on_select_2") {
     if (!xinput.form_response) {
       errors.push('Form response is required in action calls')
     } else {
@@ -146,7 +145,7 @@ export const validateXinput = (xinput: Xinput, flow: string, sequence: string): 
   }
 
   // Validate form in on_action calls
-  if (sequenceUpper.startsWith('ON_')) {
+  if (sequenceUpper === "on_search" || sequenceUpper === "on_search_1" || sequenceUpper === "on_select" || sequenceUpper === "on_select_1") {
     if (!xinput.form) {
       errors.push('Form is required in on_action calls')
     } else {
